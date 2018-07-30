@@ -1,4 +1,6 @@
 import scrapy
+from scraper.items import Recipe
+from scrapy.loader import ItemLoader
 
 class RecipeSpider(scrapy.Spider):
     name = "recipes"
@@ -18,19 +20,41 @@ class RecipeSpider(scrapy.Spider):
             yield scrapy.Request(domain + href.extract(), callback=self.parse_recipe)
 
     def parse_recipe(self, response): 
+       
         def coalesce(x):
             if (x == []):
                 return " "
             return x
 
-        yield {
-            'name': coalesce(response.xpath('//h1[@itemprop="name"]/text()').extract())[0].strip(),
-            'author': coalesce(response.xpath('//a[@class="contributor"]/@title').extract())[0].strip(),
-            'rating': coalesce(response.xpath('//span[@class="rating"]/text()').extract())[0].strip(),
-            'published_date': coalesce(response.xpath('//span[@class="pub-date"]/text()').extract())[0].strip(),
-            'description': coalesce(response.xpath('//div[@itemprop="description"]/p/text()').extract())[0].strip(),
-            'ingredients': coalesce(response.xpath('//ul[@class="ingredients"]/li/text()')).extract(),
-            'instructions': coalesce(''.join(response.xpath('//ol[@class="preparation-steps"]/li/text()').extract())).strip(),
-            'active_time': coalesce(response.xpath('//dd[@class="active-time"]/text()').extract())[0].strip(),
-            'total_time': coalesce(response.xpath('//dd[@class="total-time"]/text()').extract())[0].strip() 
-        }
+        name_path = '//h1[@itemprop="name"]/text()' 
+        author_path =  '//a[@class="contributor"]/@title'
+        rating_path = '//span[@class="rating"]/text()' 
+        published_date_path = '//span[@class="pub-date"]/text()' 
+        description_path = '//div[@itemprop="description"]/p/text()' 
+        ingredients_path = '//ul[@class="ingredients"]/li/text()' 
+        instructions_path = '//ol[@class="preparation-steps"]/li/text()' 
+        active_time_path = '//dd[@class="active-time"]/text()' 
+        total_time_path = '//dd[@class="total-time"]/text()' 
+
+        l = ItemLoader(item=Recipe(), response=response)
+
+        if (l.get_xpath(name_path)):
+            l.add_xpath('name', name_path)
+        if (l.get_xpath(author_path)):
+            l.add_xpath('author', author_path)
+        if (l.get_xpath(rating_path)):
+            l.add_xpath('rating', rating_path)
+        if (l.get_xpath(published_date_path)):
+            l.add_xpath('published_date', published_date_path)
+        if (l.get_xpath(description_path)):
+            l.add_xpath('description', description_path)
+        if (l.get_xpath(ingredients_path)):
+            l.add_xpath('ingredients', ingredients_path)
+        if (l.get_xpath(instructions_path)):
+            l.add_xpath('instructions', instructions_path)
+        if (l.get_xpath(active_time_path)):
+            l.add_xpath('active_time', active_time_path)
+        if (l.get_xpath(total_time_path)):
+            l.add_xpath('total_time', total_time_path)
+
+        yield l.load_item()

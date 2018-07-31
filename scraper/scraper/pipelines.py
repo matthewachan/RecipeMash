@@ -21,15 +21,16 @@ class ScraperPipeline(object):
 Base = declarative_base()
 class Recipe(Base):
     __tablename__ = 'recipe'
-    name = Column(String(150), primary_key=True)
-    author = Column(String(50))
-    rating = Column(String(5))
-    published_date = Column(String(50))
-    description = Column(String(1000))
-    ingredients = Column(String(5000))
-    instructions = Column(String(5000))
-    active_time = Column(String(50))
-    total_time = Column(String(50))
+    name = Column(String(150, convert_unicode=True), primary_key=True)
+    author = Column(String(50, convert_unicode=True))
+    rating = Column(String(5, convert_unicode=True))
+    published_date = Column(String(50, convert_unicode=True))
+    description = Column(String(1000, convert_unicode=True))
+    ingredients = Column(String(5000, convert_unicode=True))
+    instructions = Column(String(5000, convert_unicode=True))
+    active_time = Column(String(50, convert_unicode=True))
+    total_time = Column(String(50, convert_unicode=True))
+    url = Column(String(300, convert_unicode=True))
 
 class RecipePipeline(object):
     # def __init__(self):

@@ -6,18 +6,26 @@ class RecipeSpider(scrapy.Spider):
     name = "recipes"
 
     def start_requests(self):
-        base_url = 'https://www.epicurious.com/search/?content=recipe&page='
-        page_limit = 1
-        urls = [base_url + str(page_number) for page_number in xrange(1, page_limit + 1)]
+        self.base_url = 'https://www.epicurious.com/search/?content=recipe&page='
+        self.current_page = 1900
+        urls = [self.base_url + str(1)]
+        # urls = [base_url + str(page_number) for page_number in xrange(1, page_limit + 1)]
         
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        domain = 'https://www.epicurious.com'
+        if response.status != 404:
+            domain = 'https://www.epicurious.com'
 
-        for href in response.xpath('//h4[@class="hed"]/a/@href'):
-            yield scrapy.Request(domain + href.extract(), callback=self.parse_recipe)
+            link_path = '//h4[@class="hed"]/a/@href'
+
+            for href in response.xpath(link_path):
+                yield scrapy.Request(domain + href.extract(), callback=self.parse_recipe)
+
+            self.current_page += 1
+            yield scrapy.Request(url=self.base_url+str(self.current_page), callback=self.parse)
+
 
     def parse_recipe(self, response): 
        

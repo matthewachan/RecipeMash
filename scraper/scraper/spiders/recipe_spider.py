@@ -43,6 +43,7 @@ class RecipeSpider(scrapy.Spider):
         instructions_path = '//ol[@class="preparation-steps"]/li/text()' 
         active_time_path = '//dd[@class="active-time"]/text()' 
         total_time_path = '//dd[@class="total-time"]/text()' 
+        image_url_path = '//source[@media="(min-width: 1024px)"]/@srcset'
 
         l = ItemLoader(item=Recipe(), response=response)
 
@@ -64,5 +65,8 @@ class RecipeSpider(scrapy.Spider):
             l.add_xpath('active_time', active_time_path)
         if (l.get_xpath(total_time_path)):
             l.add_xpath('total_time', total_time_path)
+        l.add_value('url', response.request.url)
+        if (l.get_xpath(image_url_path)):
+            l.add_xpath('image_url', image_url_path)
 
         yield l.load_item()

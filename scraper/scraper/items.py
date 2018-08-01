@@ -28,4 +28,6 @@ class Recipe(scrapy.Item):
     instructions = scrapy.Field(input_processor=MapCompose(trim_whitespace, escape_quotes), output_processor=Join())
     active_time = scrapy.Field(input_processor=MapCompose(trim_whitespace, escape_quotes), output_processor=Join())
     total_time = scrapy.Field(input_processor=MapCompose(trim_whitespace, escape_quotes), output_processor=Join())
+    url = scrapy.Field(input_processor=MapCompose(trim_whitespace, escape_quotes), output_processor=Join())
+    image_url = scrapy.Field(input_processor=MapCompose(trim_whitespace, escape_quotes), output_processor=Join())
     # pass

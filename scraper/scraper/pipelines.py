@@ -31,6 +31,8 @@ class Recipe(Base):
     active_time = Column(String(50, convert_unicode=True))
     total_time = Column(String(50, convert_unicode=True))
     url = Column(String(300, convert_unicode=True))
+    image_url = Column(String(300, convert_unicode=True))
+
 
 class RecipePipeline(object):
     # def __init__(self):
@@ -54,6 +56,6 @@ class RecipePipeline(object):
 
     def process_item(self, item, spider):
         if not self.session.query(Recipe).filter_by(name=item.get('name')).first():
-            new_entry = Recipe(name=item.get('name', ''), author=item.get('author', ''), rating=item.get('rating', ''), published_date=item.get('published_date', ''), description=item.get('description', ''), ingredients=item.get('ingredients', ''), instructions=item.get('instructions', ''), active_time=item.get('active_time', ''), total_time=item.get('total_time', ''))
+            new_entry = Recipe(name=item.get('name', ''), author=item.get('author', ''), rating=item.get('rating', ''), published_date=item.get('published_date', ''), description=item.get('description', ''), ingredients=item.get('ingredients', ''), instructions=item.get('instructions', ''), active_time=item.get('active_time', ''), total_time=item.get('total_time', ''), url=item.get('url', ''), image_url=item.get('image_url', ''))
             self.session.add(new_entry)
         # self.c.execute(u'INSERT INTO recipes VALUES (\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')'.format(item.get('name', ''), item.get('author', ''), item.get('rating', ''), item.get('published_date', ''),item.get('description', ''), item.get('ingredients', ''), item.get('instructions', ''), item.get('active_time', ''), item.get('total_time', '')))

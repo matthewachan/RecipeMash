@@ -42,8 +42,9 @@ session = DBSession()
 ingredients = []
 
 
-@app.route('/')
-def index():
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def index(path):
     return render_template('index.html', ingredients=ingredients)
 
 @app.route('/ingredient', methods=['POST'])
@@ -52,7 +53,7 @@ def add_ingredient():
     ingredients.append(ingredient)
     return redirect('/')
 
-@app.route('/recipes')
+@app.route('/query')
 def list_recipes():
     query = request.args.get('ingredients')
     ingredients = query.split(',')

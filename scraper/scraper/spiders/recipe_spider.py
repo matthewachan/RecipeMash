@@ -7,7 +7,7 @@ class RecipeSpider(scrapy.Spider):
 
     def start_requests(self):
         self.base_url = 'https://www.epicurious.com/search/?content=recipe&page='
-        self.current_page = 1900
+        self.current_page = 1
         urls = [self.base_url + str(1)]
         # urls = [base_url + str(page_number) for page_number in xrange(1, page_limit + 1)]
         

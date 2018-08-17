@@ -58,7 +58,7 @@ def list_recipes():
     query = request.args.get('ingredients')
     ingredients = query.split(',')
     criteria = reduce((lambda x, y: x + "%" + y), ingredients)
-    results = session.query(Recipe).filter(Recipe.ingredients.ilike('%{}%'.format(criteria))).all()
+    results = session.query(Recipe).filter(Recipe.ingredients.ilike('%{}%'.format(criteria))).order_by(Recipe.rating.desc()).all()
     results = map((lambda x: { 'name': x.name, 'author': x.author, 'rating': x.rating, 'published_date': x.published_date, 'description': x.description, 'ingredients': x.ingredients, 'instructions': x.instructions, 'active_time': x.active_time, 'total_time': x.total_time, 'url': x.url, 'image_url': x.image_url }), results)
     return json.dumps(results)
 

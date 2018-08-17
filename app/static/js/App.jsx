@@ -16,7 +16,7 @@ export default class App extends React.Component {
     return (
         <div>
             <div><Top /></div>
-            <div style={{ padding: '0 50px' }}><Main /></div>
+            <div style={{ padding: '15px 50px' }}><Main /></div>
         </div>
     )
   }
@@ -30,38 +30,61 @@ class Recipes extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      ingredients: [],
       recipes: []
     };
     this.loading = true;
+    this.getSearchTerms = this.getSearchTerms.bind(this);
   }
 
   componentDidMount() {
     let url = window.location.href;
     let params = url.slice(url.indexOf('?'), url.length);
+    let ingredients = params.slice(params.indexOf('=')+1, params.length);
     fetch('http://' + window.location.host + '/query' + params)
     .then(results => {
         return results.json();
     })
     .then(data => {
-      this.setState({recipes: data});
+      this.setState({ingredients: ingredients.split(','), recipes: data});
     });
     this.loading = false;
   }
 
+  getSearchTerms() {
+    let list = [];
+    for (let i = 0; i < this.state.ingredients.length; i++) {
+      let item = this.state.ingredients[i];
+      list.push(<Tag key={item} closable onClose={() => console.log('Removing ' + item)}>{item}</Tag>);
+    }
+    return list;
+  }
+
   render() {
     return (
-      <List itemLayout='vertical' loading={this.loading} size='large' dataSource={this.state.recipes} pagination={{pageSize: 5}}
-      renderItem={item => (
-        <List.Item key={item.name} actions={[<span><Icon type="star" style={{ marginRight: 8 }}/>{item.rating} (XX reviews)</span>]}
-       extra={<img width={272} src={item.image_url} />}>
-        <List.Item.Meta avatar={<Avatar src={item.image_url} />} 
-        title={<a href={item.url}>{item.name}</a>}
-        description={item.author}
-        />
-              {item.ingredients.split('|').map(ingredient => (<Tag color={pickColor()}>{ingredient}</Tag>))}
-        </List.Item>
-      )}
-      />
+      <div>
+        <Row justify='center'>
+            <Col span={24}>
+              
+            </Col>
+        </Row>
+        <Row justify='center'>
+            <Col span={24}>
+                <List header={<div>Search terms: { this.getSearchTerms() }</div>} itemLayout='vertical' loading={this.loading} size='large' dataSource={this.state.recipes} pagination={{pageSize: 5}}
+                renderItem={item => (
+                  <List.Item key={item.name} actions={[<span><Icon type="star" style={{ marginRight: 8 }}/>{item.rating} (XX reviews)</span>]}
+                 extra={<img width={272} src={item.image_url} />}>
+                  <List.Item.Meta avatar={<Avatar src={item.image_url} />} 
+                  title={<a href={item.url}>{item.name}</a>}
+                  description={item.author}
+                  />
+                        {item.ingredients.split('|').map(ingredient => (<Tag key={ingredient} color={pickColor()}>{ingredient}</Tag>))}
+                  </List.Item>
+                )}
+                />
+          </Col>
+        </Row>
+      </div>
     )
   }
 }
@@ -78,6 +101,7 @@ class Home extends React.Component {
         super(props);
         this.state = {
             input: '',
+            disabled: true,
             ingredients: []
         };
         this.addIngredient = this.addIngredient.bind(this);
@@ -89,12 +113,13 @@ class Home extends React.Component {
     addIngredient(e) {
         e.preventDefault();
         var text = this.state.input;
-        this.setState({input: '', ingredients: this.state.ingredients.concat([text])});
+        this.setState({input: '', disabled: false, ingredients: this.state.ingredients.concat([text])});
     }
 
     onChangeInput(e) {
       this.setState({
         input: e.target.value,
+        disabled: this.state.disabled,
         ingredients: this.state.ingredients
       });
     }
@@ -120,12 +145,13 @@ class Home extends React.Component {
           break;
         }
       }
-      this.setState({input: this.state.input, ingredients: a});
+      let isDisabled = true;
+      if (a.length > 0) {
+        isDisabled = false;
+      }
+      this.setState({input: this.state.input, disabled: isDisabled, ingredients: a});
     }
       
-
-
-
     render() {
         const formItemLayout = {
           labelCol: {
@@ -172,7 +198,7 @@ class Home extends React.Component {
                         />
                         </FormItem>
                         <FormItem {...tailFormItemLayout}>
-                            <Link to={{ pathname: '/recipes', search: this.getQueryString() }}><Button type='primary'>Mash</Button></Link>
+                            <Link to={{ pathname: '/recipes', search: this.getQueryString() }}><Button disabled={this.state.disabled} type='primary'>Mash</Button></Link>
                         </FormItem>
                     </Form>
                 </Col>

@@ -46,8 +46,10 @@ class Recipes extends React.Component {
 
   queryRecipes(params) {
     let ingredients = params.slice(params.indexOf('=') + 1, params.length);
-    let url = 'http://' + window.location.host + '/query' + params;
-    fetch(url)
+    let base_url = 'http://' + window.location.host;
+    let endpoint = base_url + '/query' + params;
+    let url = base_url + '/recipes' + params;
+    fetch(endpoint)
     .then(results => {
         return results.json();
     })
@@ -82,7 +84,6 @@ class Recipes extends React.Component {
     return list;
   }
 
-
   render() {
     return (
       <div>
@@ -94,7 +95,7 @@ class Recipes extends React.Component {
                   <List.Item key={item.name} actions={[<span><Icon type="star" style={{ marginRight: 8 }}/>{item.rating} (XX reviews)</span>]}
                  extra={<img width={272} style={{ display: 'inline-block' }} src={item.image_url ? item.image_url : ""} />}>
                   <List.Item.Meta avatar={<Avatar src={item.image_url} />} 
-                  title={<a href={item.url}>{item.name}</a>}
+                  title={<a href={item.url}>{item.name.replace("''", "'")}</a>}
                   description={item.total_time ? 'Cooking Time: ' + item.total_time : ''}
                   />
                     <ul style={{columns: 2, listStylePosition: 'inside'}}>

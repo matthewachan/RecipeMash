@@ -40,13 +40,14 @@ class Recipes extends React.Component {
     };
     this.loading = true;
     this.getSearchTerms = this.getSearchTerms.bind(this);
+    this.queryRecipes = this.queryRecipes.bind(this);
+    this.removeIngredient = this.removeIngredient.bind(this);
   }
 
-  componentDidMount() {
-    let url = window.location.href;
-    let params = url.slice(url.indexOf('?'), url.length);
-    let ingredients = params.slice(params.indexOf('=')+1, params.length);
-    fetch('http://' + window.location.host + '/query' + params)
+  queryRecipes(params) {
+    let ingredients = params.slice(params.indexOf('=') + 1, params.length);
+    let url = 'http://' + window.location.host + '/query' + params;
+    fetch(url)
     .then(results => {
         return results.json();
     })
@@ -54,16 +55,33 @@ class Recipes extends React.Component {
       this.setState({ingredients: ingredients.split(','), recipes: data});
     });
     this.loading = false;
+    window.history.pushState('', 'Recipe Mash', url);
   }
+
+  componentDidMount() {
+    let url = window.location.href;
+    let params = url.slice(url.indexOf('?'), url.length);
+    this.queryRecipes(params);
+  }
+
+  removeIngredient(ingredient) {
+    let a = this.state.ingredients.slice()
+    a.splice(a.indexOf(ingredient), 1).join(',');
+    let s = '?ingredients=' + a
+    console.log(s);
+    return s;
+  }
+
 
   getSearchTerms() {
     let list = [];
     for (let i = 0; i < this.state.ingredients.length; i++) {
       let item = this.state.ingredients[i];
-      list.push(<Tag key={item} closable onClose={() => console.log('Removing ' + item)}>{item}</Tag>);
+      list.push(<Tag key={item} closable onClose={() => this.queryRecipes(this.removeIngredient(item))}>{item}</Tag>);
     }
     return list;
   }
+
 
   render() {
     return (
@@ -77,7 +95,7 @@ class Recipes extends React.Component {
                  extra={<img width={272} style={{ display: 'inline-block' }} src={item.image_url ? item.image_url : ""} />}>
                   <List.Item.Meta avatar={<Avatar src={item.image_url} />} 
                   title={<a href={item.url}>{item.name}</a>}
-                  description={item.total_time}
+                  description={item.total_time ? 'Cooking Time: ' + item.total_time : ''}
                   />
                     <ul style={{columns: 2, listStylePosition: 'inside'}}>
                         {item.ingredients.split('|').map(ingredient => (<li >{ingredient}</li>))}
@@ -182,13 +200,13 @@ class Home extends React.Component {
             <div className='bg'>
             <div style={{ paddingTop: '35px' }}><Top /></div>
             <Row style={{ padding: '15px 50px' }} justify='center'>
-                <Col span={10}>
+                <Col span={6} offset={4}>
                     <h1>Main photo here</h1>
                 </Col>
                 <Col offset={2} span={8}>
                     <Form className='alignRight' onSubmit={this.addIngredient}>
                         <FormItem className='alignLeft' {...formItemLayout}>
-                            <h2>What's in the fridge?</h2>
+                            <h1>What's in the fridge?</h1>
                         </FormItem>
                         <FormItem {...formItemLayout}>
                             <Input className='form-control' value={this.state.input} onChange={this.onChangeInput} type='text' size='small' suffix={<Icon type="plus" />} placeholder='Add an ingredient' />

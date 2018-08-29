@@ -25,7 +25,7 @@ export default class App extends React.Component {
 
 const Top = () => (
   <Row justify='center'>
-      <Col span={10} offset={7}>
+      <Col span={24}>
           <h1 className='alignCenter' id='banner'><Link to={{ pathname: '/' }}>RECIPE MASH</Link></h1>
       </Col>
   </Row>
@@ -90,7 +90,7 @@ class Recipes extends React.Component {
       <div style={{ paddingTop: '35px'}}><Top /></div>
         <Row style={{ padding: '15px 50px' }} justify='center'>
             <Col span={24}>
-                <List header={<div>Search terms: { this.getSearchTerms() }</div>} itemLayout='vertical' loading={this.loading} size='large' dataSource={this.state.recipes} pagination={{pageSize: 5}}
+                <List id='recipe-list' header={<div>Search terms: { this.getSearchTerms() }<Link to='/'><span style={{ float: 'right'}}><Icon type='arrow-left' />&nbsp;Back to search</span></Link></div>} itemLayout='vertical' loading={this.loading} size='large' dataSource={this.state.recipes} pagination={{pageSize: 5}}
                 renderItem={item => (
                   <List.Item key={item.name} actions={[<span><Icon type="star" style={{ marginRight: 8 }}/>{item.rating} (XX reviews)</span>]}
                  extra={<img width={272} style={{ display: 'inline-block' }} src={item.image_url ? item.image_url : ""} />}>
@@ -201,10 +201,8 @@ class Home extends React.Component {
             <div className='bg'>
             <div style={{ paddingTop: '35px' }}><Top /></div>
             <Row style={{ padding: '15px 50px' }} justify='center'>
-                <Col span={6} offset={4}>
-                    <h1>Main photo here</h1>
-                </Col>
-                <Col offset={2} span={8}>
+                <Col offset={8} span={8}>
+                    <div className='transbox'>
                     <Form className='alignRight' onSubmit={this.addIngredient}>
                         <FormItem className='alignLeft' {...formItemLayout}>
                             <h1>What's in the fridge?</h1>
@@ -225,6 +223,7 @@ class Home extends React.Component {
                             <Link to={{ pathname: '/recipes', search: this.getQueryString() }}><Button size='large' disabled={this.state.disabled} type='primary'>MASH</Button></Link>
                         </FormItem>
                     </Form>
+                    </div>
                 </Col>
           </Row>
           </div>

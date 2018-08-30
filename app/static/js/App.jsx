@@ -92,15 +92,17 @@ class Recipes extends React.Component {
             <Col span={24}>
                 <List id='recipe-list' header={<div>Search terms: { this.getSearchTerms() }<Link to='/'><span style={{ float: 'right'}}><Icon type='arrow-left' />&nbsp;Back to search</span></Link></div>} itemLayout='vertical' loading={this.loading} size='large' dataSource={this.state.recipes} pagination={{pageSize: 5}}
                 renderItem={item => (
-                  <List.Item key={item.name} actions={[<span><Icon type="star" style={{ marginRight: 8 }}/>{item.rating} (XX reviews)</span>]}
+                  <List.Item key={item.name} actions={[<span><Icon type='star' style={{ marginRight: 8 }}/>{item.rating} ({item.num_reviews} reviews)</span>, <span><Icon type='heart' style={{ marginRight: 8 }}/>{item.prepare_again_rating ? 'Make it again: ' + item.prepare_again_rating : ''}</span>]}
                  extra={<img width={272} style={{ display: 'inline-block' }} src={item.image_url ? item.image_url : ""} />}>
                   <List.Item.Meta avatar={<Avatar src={item.image_url} />} 
                   title={<a href={item.url}>{item.name.replace("''", "'")}</a>}
                   description={item.total_time ? 'Cooking Time: ' + item.total_time : ''}
                   />
-                    <ul style={{columns: 2, listStylePosition: 'inside'}}>
-                        {item.ingredients.split('|').map(ingredient => (<li >{ingredient}</li>))}
-                    </ul>
+                    <div>
+                      <strong>Ingredients:</strong>
+                      <div style={{columns: 2, listStylePosition: 'inside'}} dangerouslySetInnerHTML={{__html: item.ingredients_html}}>
+                      </div>
+                    </div>
                   </List.Item>
                 )}
                 />
@@ -216,7 +218,7 @@ class Home extends React.Component {
                             locale={{emptyText: 'No ingredients'}}
                             size='small'
                             dataSource={this.state.ingredients}
-                            renderItem={item => (<List.Item key={item} actions={[<span onClick={() => this.removeIngredient(item)}><Icon type='delete'/></span>]} >{item}</List.Item>)}
+                            renderItem={item => (<List.Item key={item} actions={[<span onClick={() => this.removeIngredient(item)}><Icon className='delete-icon' type='delete'/></span>]} >{item}</List.Item>)}
                         />
                         </FormItem>
                         <FormItem {...tailFormItemLayout}>

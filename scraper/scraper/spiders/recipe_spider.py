@@ -37,9 +37,12 @@ class RecipeSpider(scrapy.Spider):
         name_path = '//h1[@itemprop="name"]/text()' 
         author_path =  '//a[@class="contributor"]/@title'
         rating_path = '//span[@class="rating"]/text()' 
+        num_reviews_path = '//span[@class="reviews-count"]/text()'
+        prepare_again_rating_path = '//div[@class="prepare-again-rating"]/span/text()'
         published_date_path = '//span[@class="pub-date"]/text()' 
         description_path = '//div[@itemprop="description"]/p/text()' 
-        ingredients_path = '//ul[@class="ingredients"]/li/text()' 
+        ingredients_path = '//li[@class="ingredient"]' 
+        ingredients_html_path = '//li[@class="ingredient-group"]'
         instructions_path = '//ol[@class="preparation-steps"]/li/text()' 
         active_time_path = '//dd[@class="active-time"]/text()' 
         total_time_path = '//dd[@class="total-time"]/text()' 
@@ -53,12 +56,18 @@ class RecipeSpider(scrapy.Spider):
             l.add_xpath('author', author_path)
         if (l.get_xpath(rating_path)):
             l.add_xpath('rating', rating_path)
+        if (l.get_xpath(num_reviews_path)):
+            l.add_xpath('num_reviews', num_reviews_path)
+        if (l.get_xpath(prepare_again_rating_path)):
+            l.add_xpath('prepare_again_rating', prepare_again_rating_path)
         if (l.get_xpath(published_date_path)):
             l.add_xpath('published_date', published_date_path)
         if (l.get_xpath(description_path)):
             l.add_xpath('description', description_path)
         if (l.get_xpath(ingredients_path)):
             l.add_xpath('ingredients', ingredients_path)
+        if (l.get_xpath(ingredients_html_path)):
+            l.add_xpath('ingredients_html', ingredients_html_path)
         if (l.get_xpath(instructions_path)):
             l.add_xpath('instructions', instructions_path)
         if (l.get_xpath(active_time_path)):
